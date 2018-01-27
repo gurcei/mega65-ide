@@ -30,6 +30,8 @@
   // Usual cursor navigation stuff
   DOWN (17) - move cursor down
   UP (145) - move cursor up
+  C=F (6) - Page Down
+  C=B (2) - Page Up
 
   ...
 
@@ -72,6 +74,12 @@ unsigned char poll_keyboard(void)
     break;
   case 145: // cursor up
     window_cursor_down(-1);
+    break;
+  case 6:  // page down
+    window_cursor_down(+22);
+    break;
+  case 2:  // page up
+    window_cursor_down(-22);
     break;
   case 157: // cursor left
     window_cursor_left();

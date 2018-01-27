@@ -26,7 +26,7 @@ void window_prev_buffer(void);
 void window_next_buffer(void);
 void window_scroll(unsigned int count);
 void window_scroll_if_necessary(void);
-void window_cursor_down(char delta);
+void window_cursor_down(short delta);
 void window_cursor_left(void);
 void window_cursor_right(void);
 void window_cursor_start_of_line(void);

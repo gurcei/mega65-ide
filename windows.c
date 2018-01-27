@@ -244,12 +244,12 @@ void window_redraw_line_or_window_after_cursor_move(void)
     redraw_current_window_line();
 }
 
-void window_cursor_down(char delta)
+void window_cursor_down(short delta)
 {
   get_current_window_and_buffer();
 
   // Are we already at the start of the buffer, and trying to go up?
-  if (delta!=1)
+  if (delta < 0)
     if (!buffers[bid].current_line)
       return;
 
@@ -258,8 +258,15 @@ void window_cursor_down(char delta)
   // Draw current line without cursor
   window_erase_cursor();
 
-  if (delta==1) buffers[bid].current_line++;
-  else buffers[bid].current_line--;
+  if (delta >= 0)
+    buffers[bid].current_line += delta;
+  else if (delta <= 0)
+  {
+    if (buffers[bid].current_line < -delta)
+        buffers[bid].current_line = 0;
+    else
+      buffers[bid].current_line += delta;
+  }
   window_scroll_if_necessary();
   
   // Fetch new current line
