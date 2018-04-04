@@ -1,4 +1,14 @@
 .*.swp
+*.o
+*.s
+*.map
+*.prg
+ascii.h
+asciih
+ascii8x8.bin
+pngprepare
+*.D81
+!charset.s
 gmon.out
 dump.mem
 a.out

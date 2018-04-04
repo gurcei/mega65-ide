@@ -57,7 +57,9 @@ m65ide.prg:	$(ASSFILES) c64-m65ide.cfg
 	$(CL65) $(COPTS) $(LOPTS) -vm -m m65ide.map -o m65ide.prg $(ASSFILES)
 
 clean:
-	rm -f M65IDE.D81 $(FILES)
+	mv autoboot.c65 autoboot.bkp
+	rm -f M65IDE.D81 $(FILES) asciih ascii.h ascii8x8.bin
+	mv autoboot.bkp autoboot.c65
 
 cleangen:
 	rm $(VHDLSRCDIR)/kickstart.vhdl $(VHDLSRCDIR)/charrom.vhdl *.M65
