@@ -24,6 +24,7 @@
 #include "lines.h"
 #include "windows.h"
 #include "buffers.h"
+#include "debug.h"
 
 unsigned char ui_busy_flag=0;
 
@@ -246,6 +247,8 @@ void window_redraw_line_or_window_after_cursor_move(void)
 
 void window_cursor_down(short delta)
 {
+  send_debug("window-cursor-down(delta=%d)", (int)delta);
+
   get_current_window_and_buffer();
 
   // Are we already at the start of the buffer, and trying to go up?

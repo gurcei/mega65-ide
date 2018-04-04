@@ -27,6 +27,7 @@
 #include "memory.h"
 #include "buffers.h"
 #include "screen.h"
+#include "debug.h"
 
 // Buffer for currently retrieved line
 unsigned char line_buffer_buffer_id=0xff;
@@ -213,11 +214,12 @@ unsigned int line_find_offset(unsigned char buffer_id, unsigned int line_number)
 unsigned char buffer_list_header[80]=
   "filename          flags                 base    alloc   length lines            ";
 
-
 unsigned char line_fetch(unsigned char buffer_id, unsigned int line_number)  
 {
   unsigned char i;
   
+  send_debug("line-fetch(bufferid=%d, line-number=%d)", (int)buffer_id, line_number);
+
   if (!buffer_id) {
     /* It is the *buffer-list* buffer:
        Generate the line of information about the buffer slot.

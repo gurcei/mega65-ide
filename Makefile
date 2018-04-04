@@ -13,7 +13,8 @@ M65IDESOURCES=	main.c \
 		buffers.c \
 		lines.c \
 		windows.c \
-		input.c
+		input.c \
+		debug.c
 
 ASSFILES=	main.s \
 		memory.s \
@@ -22,6 +23,7 @@ ASSFILES=	main.s \
 		lines.s \
 		windows.s \
 		input.s \
+		debug.s \
 		charset.s
 
 HEADERS=	Makefile \
@@ -31,6 +33,7 @@ HEADERS=	Makefile \
 		lines.h \
 		windows.h \
 		input.h \
+		debug.h \
 		ascii.h
 
 DATAFILES=	ascii8x8.bin
