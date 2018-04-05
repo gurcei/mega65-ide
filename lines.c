@@ -218,8 +218,6 @@ unsigned char line_fetch(unsigned char buffer_id, unsigned int line_number)
 {
   unsigned char i;
   
-  send_debug("line-fetch(bufferid=%d, line-number=%d)", (int)buffer_id, line_number);
-
   if (!buffer_id) {
     /* It is the *buffer-list* buffer:
        Generate the line of information about the buffer slot.

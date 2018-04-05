@@ -19,6 +19,7 @@
   At the top of the screen, each window will have the name of the buffer listed.
   
 */
+#include <time.h>
 #include "memory.h"
 #include "screen.h"
 #include "lines.h"
@@ -247,9 +248,13 @@ void window_redraw_line_or_window_after_cursor_move(void)
 
 void window_cursor_down(short delta)
 {
+  clock_t t0, t1;
   send_debug("window-cursor-down(delta=%d)", (int)delta);
 
+	t0 = clock();
   get_current_window_and_buffer();
+  t1 = clock();
+	send_debug("dif0=%ld", t1-t0);
 
   // Are we already at the start of the buffer, and trying to go up?
   if (delta < 0)
@@ -260,6 +265,8 @@ void window_cursor_down(short delta)
   
   // Draw current line without cursor
   window_erase_cursor();
+  t0 = clock();
+  send_debug("dif1=%ld", t0-t1);
 
   if (delta >= 0)
     buffers[bid].current_line += delta;
@@ -271,9 +278,13 @@ void window_cursor_down(short delta)
       buffers[bid].current_line += delta;
   }
   window_scroll_if_necessary();
+  t1 = clock();
+  send_debug("dif2=%ld", t1-t0);
   
   // Fetch new current line
   line_fetch(bid,buffers[bid].current_line);
+  t0 = clock();
+  send_debug("dif3=%ld", t0-t1);
 
   // If cursor position is beyond end, adjust to end
   if (buffers[bid].current_column>line_buffer_length) {
@@ -282,6 +293,8 @@ void window_cursor_down(short delta)
 
   // Make sure cursor is still in window, and redraw
   window_redraw_line_or_window_after_cursor_move();  
+  t1 = clock();
+  send_debug("dif4=%ld", t1-t0);
 }
 
 void window_cursor_left(void)
