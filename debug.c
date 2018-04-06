@@ -1,9 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "memory.h"
+#include "debug.h"
 
 unsigned char mybyte;
 unsigned char buff[256];
+clock_t t0, t1;
+
+clock_t start_timer(void)
+{
+  t0 = clock();
+  return t0;
+}
+
+void set_timer(clock_t t)
+{
+  t0 = t;
+}
+
+clock_t read_timer(void)
+{
+  t1 = clock();
+  return t1;
+}
+
+clock_t get_timer_diff(void)
+{
+  clock_t diff;
+  read_timer();
+  diff = t1 - t0;
+  t0 = t1;
+  return diff;
+}
 
 #pragma optimize(off)
 void send_debug(unsigned char *s, ...)

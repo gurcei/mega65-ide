@@ -213,6 +213,8 @@ unsigned int line_find_offset(unsigned char buffer_id, unsigned int line_number)
 
 unsigned char buffer_list_header[80]=
   "filename          flags                 base    alloc   length lines            ";
+// 01234567891111111111222222222233333333334444444444555555555566666666667777777777
+//           0123456789012345678901234567890123456789012345678901234567890123456789
 
 unsigned char line_fetch(unsigned char buffer_id, unsigned int line_number)  
 {
@@ -261,7 +263,15 @@ unsigned char line_fetch(unsigned char buffer_id, unsigned int line_number)
     for(i=0;i<80;i++) if (line_buffer[i]<' ') line_buffer[i]|=0x60;
   } else {
     // Find the line in the buffer
-    line_offset_in_buffer=line_find_offset(buffer_id,line_number);
+    //if (last_buffer_id==buffer_id) {
+      //if (last_line_number<=line_number)
+        line_offset_in_buffer=line_find_offset(buffer_id,line_number);
+      //else
+        //line_offset_in_buffer=line_find_offset_backwards(buffer_id,line_number);
+    //}
+      //else
+        //line_offset_in_buffer=line_find_offset(buffer_id,line_number);
+
     if (line_offset_in_buffer==0xffff) return 0xff;
 
     // Read it into the buffer

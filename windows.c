@@ -19,7 +19,6 @@
   At the top of the screen, each window will have the name of the buffer listed.
   
 */
-#include <time.h>
 #include "memory.h"
 #include "screen.h"
 #include "lines.h"
@@ -77,7 +76,7 @@ void window_scroll_if_necessary(void)
   unsigned char buffer_xoffset=windows[current_window].xoffset;
   unsigned int new_line = windows[current_window].first_line;
   unsigned char scrolled=0;
-  
+
   if (buffer_line<new_line) {
     windows[current_window].first_line=buffer_line; scrolled=1;
   }
@@ -248,13 +247,12 @@ void window_redraw_line_or_window_after_cursor_move(void)
 
 void window_cursor_down(short delta)
 {
-  clock_t t0, t1;
+  clock_t t0;
   send_debug("window-cursor-down(delta=%d)", (int)delta);
 
-	t0 = clock();
+  start_timer();
   get_current_window_and_buffer();
-  t1 = clock();
-	send_debug("dif0=%ld", t1-t0);
+	send_debug("dif0=%ld", get_timer_diff());
 
   // Are we already at the start of the buffer, and trying to go up?
   if (delta < 0)
@@ -265,8 +263,8 @@ void window_cursor_down(short delta)
   
   // Draw current line without cursor
   window_erase_cursor();
-  t0 = clock();
-  send_debug("dif1=%ld", t0-t1);
+  send_debug("dif1=%ld", get_timer_diff());
+  t0 = read_timer();
 
   if (delta >= 0)
     buffers[bid].current_line += delta;
@@ -278,13 +276,13 @@ void window_cursor_down(short delta)
       buffers[bid].current_line += delta;
   }
   window_scroll_if_necessary();
-  t1 = clock();
-  send_debug("dif2=%ld", t1-t0);
+
+  set_timer(t0);
+  send_debug("dif2=%ld", get_timer_diff());
   
   // Fetch new current line
   line_fetch(bid,buffers[bid].current_line);
-  t0 = clock();
-  send_debug("dif3=%ld", t0-t1);
+  send_debug("dif3=%ld", get_timer_diff());
 
   // If cursor position is beyond end, adjust to end
   if (buffers[bid].current_column>line_buffer_length) {
@@ -293,8 +291,7 @@ void window_cursor_down(short delta)
 
   // Make sure cursor is still in window, and redraw
   window_redraw_line_or_window_after_cursor_move();  
-  t1 = clock();
-  send_debug("dif4=%ld", t1-t0);
+  send_debug("dif4=%ld", get_timer_diff());
 }
 
 void window_cursor_left(void)
@@ -474,7 +471,6 @@ void draw_window(unsigned char w_in)
 
   draw_window_title(w_in,w_in==current_window);
 
-  
   // Draw 23 lines from file
   for(l=0;l<23;l++) draw_window_line(w,l);
 }
@@ -598,15 +594,18 @@ void draw_window_line(unsigned char w_in, unsigned char l_in)
   unsigned int screen_line_address=SCREEN_ADDRESS+80;
   struct window *win=&windows[w_in];
   w=w_in; l=l_in;
+  start_timer();
 
   screen_line_address+=80*l;
   
   if (line_fetch(win->bid,win->first_line+l)) {
+    send_debug("  clause1");
     // Error fetching line -- draw as black line with blue full-stop in left column
     screen_colour_line_segment(screen_line_address+win->x,win->width-1,COLOUR_BLACK);
     POKE(screen_line_address+win->x,'.');
     lfill(screen_line_address+win->x+1,' ',win->width-2);
   } else {
+    send_debug("  clause2");
     // We have the line, so draw the appropriate segment in the appropriate place
     // (Do ASCII to screen conversion off-screen to avoid visible glitching)
     // XXX - We could do this faster by combining the ascii to screen conversion with
@@ -618,14 +617,18 @@ void draw_window_line(unsigned char w_in, unsigned char l_in)
     screen_colour_line_segment(screen_line_address+win->x,win->width-1,
 			       COLOUR_LIGHTBLUE);	
   }
+  send_debug("  dif0=%ld", get_timer_diff());
 
   // Draw cursor and any other highlights (such as breakpoints, current line under
   // debug, and highlighted text for copy/paste buffer).
   draw_window_line_attributes(w_in,l_in);
   
+  send_debug("  dif1=%ld", get_timer_diff());
+
   // Draw border character (solid white bar (reversed spaces))
   // XXX - It would be nice to have a scroll-bar type indication here as well.
   POKE(screen_line_address+win->x+win->width-1,' ');
   lpoke(screen_line_address+COLOUR_RAM_ADDRESS-SCREEN_ADDRESS+win->x+win->width-1,
 	COLOUR_LIGHTGREY|ATTRIB_REVERSE);
+  send_debug("  dif2=%ld", get_timer_diff());
 }
