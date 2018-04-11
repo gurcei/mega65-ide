@@ -43,7 +43,7 @@ M65IDE.D81:	$(FILES)
 	cbmconvert -v2 -D8o M65IDE.D81 $(FILES) $(M65IDESOURCES) $(HEADERS)
 
 %.s:	%.c $(HEADERS) $(DATAFILES)
-	$(CC65) $(COPTS) -o $@ $<
+	$(CC65) $(COPTS) --add-source -o $@ $<
 
 ascii8x8.bin: ascii00-7f.png pngprepare
 	./pngprepare charrom ascii00-7f.png ascii8x8.bin
@@ -57,7 +57,7 @@ pngprepare:	pngprepare.c
 	$(CC) -I/usr/local/include -L/usr/local/lib -o pngprepare pngprepare.c -lpng
 
 m65ide.prg:	$(ASSFILES) c64-m65ide.cfg
-	$(CL65) $(COPTS) $(LOPTS) -vm -m m65ide.map -o m65ide.prg $(ASSFILES)
+	$(CL65) $(COPTS) $(LOPTS) -vm -l m65ide.list -m m65ide.map -o m65ide.prg $(ASSFILES)
 
 clean:
 	mv autoboot.c65 autoboot.bkp
